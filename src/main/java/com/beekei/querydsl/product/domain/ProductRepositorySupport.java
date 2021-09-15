@@ -30,6 +30,7 @@ public class ProductRepositorySupport extends QuerydslRepositorySupport {
                 .select(Projections.constructor(ProductDTO.class,
                         product.id, product.name, product.price
                 )).from(product)
+
                 .orderBy(product.id.desc())
                 .offset(paging.getOffset())
                 .limit(paging.getPageSize())
