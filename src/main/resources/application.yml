@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/study?serverTimezone=Asia/Seoul&useSSL=false&characterEncoding=utf8&allowPublicKeyRetrieval=true
+    username: root
+    password: localstudy
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: false # DDL 생성 여부
+    open-in-view: false # View 단에서 Session(영속성 컨텍스트) 적용 여부 - 확작성 측면으로 볼때 false 권장 (default: true)
+    hibernate:
+      ddl-auto: update # ddl 전략 설정 none, update, validata, create, create-drop
+#      naming:
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # 테이블 매핑 시 네이밍 전략 설정(카멜)
+      use-new-id-generator-mappings: false #  Hibernate의 id 생성 전략을 그대로 사용
+    show-sql: true # sql 출력
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true # LAZY 로드를 default로 설정
+        format_sql: true # sql을 보기 좋게 출력

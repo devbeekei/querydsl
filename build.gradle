@@ -1,0 +1,68 @@
+buildscript {
+    ext {
+        // Querydsl Plugin 버전
+        querydslPluginVersion = '1.0.10'
+    }
+    repositories {
+        // Plugin 저장소
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        // Querydsl Plugin 의존성 등록
+        classpath("gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:${querydslPluginVersion}")
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.beekei'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    // test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.7.7'
+    // rest
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // jdbc
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // mysql
+    runtimeOnly 'mysql:mysql-connector-java'
+    // jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // lombok
+    implementation "org.projectlombok:lombok"
+    annotationProcessor 'org.projectlombok:lombok'
+    // querydsl
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'com.querydsl:querydsl-apt'
+    annotationProcessor 'com.querydsl:querydsl-apt'
+}
+
+// Querydsl Plugin 설정
+apply plugin: 'com.ewerk.gradle.plugins.querydsl'
+// Q파일 생성 위치
+def querydslSrcDir = "src/main/generated"
+querydsl {
+    library = "com.querydsl:querydsl-apt"
+    jpa = true
+    querydslSourcesDir = querydslSrcDir
+}
+sourceSets { main.java.srcDirs = ['src/main/java', querydslSrcDir] }
+configurations { querydsl.extendsFrom compileClasspath }
+clean { delete file(querydslSrcDir) } // gradle clean시 Q파일 삭제
+compileQuerydsl { options.annotationProcessorPath = configurations.querydsl }
+tasks.withType(JavaCompile) { options.annotationProcessorGeneratedSourcesDirectory = file(querydslSrcDir) }
