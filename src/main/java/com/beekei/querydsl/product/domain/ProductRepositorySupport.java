@@ -4,6 +4,7 @@ import com.beekei.querydsl.common.PagingRequest;
 import com.beekei.querydsl.product.application.dto.ProductDTO;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,19 +24,23 @@ public class ProductRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    public Page<ProductDTO> pageList(PagingRequest pagingRequest) {
+    public Page<ProductDTO> pageList(String searchName, PagingRequest pagingRequest) {
         Pageable paging = pagingRequest.pageable();
 
         QueryResults<ProductDTO> result = queryFactory
                 .select(Projections.constructor(ProductDTO.class,
                         product.id, product.name, product.price
                 )).from(product)
-
+                .where(searchName(searchName))
                 .orderBy(product.id.desc())
                 .offset(paging.getOffset())
                 .limit(paging.getPageSize())
                 .fetchResults();
         return new PageImpl<>(result.getResults(), paging, result.getTotal());
+    }
+
+    private BooleanExpression searchName(String searchName) {
+        return searchName != null ? product.name.contains(searchName) : null;
     }
 
 }

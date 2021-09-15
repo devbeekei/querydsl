@@ -24,8 +24,8 @@ public class ProductController {
     }
 
     @GetMapping(name = "상품 목록", value = "")
-    public ApiResponse<PageList<ProductDTO>> list(@RequestParam int size, @RequestParam int page) {
-        PageList<ProductDTO> productList = productService.productList(new PagingRequest(size, page));
+    public ApiResponse<PageList<ProductDTO>> list(@RequestParam String searchName, @RequestParam int size, @RequestParam int page) {
+        PageList<ProductDTO> productList = productService.productList(searchName, new PagingRequest(size, page));
         return new ApiResponse<>(200, "Success", productList);
     }
 

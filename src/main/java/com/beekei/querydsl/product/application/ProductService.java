@@ -29,8 +29,8 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public PageList<ProductDTO> productList(PagingRequest pagingRequest) {
-        Page<ProductDTO> productDTOPage = productRepositorySupport.pageList(pagingRequest);
+    public PageList<ProductDTO> productList(String searchName, PagingRequest pagingRequest) {
+        Page<ProductDTO> productDTOPage = productRepositorySupport.pageList(searchName, pagingRequest);
         return new PageList<>(
                 productDTOPage.getContent(),
                 productDTOPage.getTotalElements(),
